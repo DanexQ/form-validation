@@ -22,6 +22,7 @@ export interface InputProp {
   id: number;
   name: string;
   type: string;
+  label: string;
   placeholder: string;
   errorMessage: string;
   pattern?: string;
@@ -29,13 +30,16 @@ export interface InputProp {
 
 const App = () => {
   const [formData, setFormData] = useState<FormDataProps>(initialState);
-  const isDisabled = Object.values(formData).every((val) => val !== "");
+  const isDisabled =
+    Object.values(formData).every((val) => val !== "") &&
+    formData.password === formData.comfirmPassword;
 
   const inputs: InputProp[] = [
     {
       id: 1,
       name: "username",
       type: "text",
+      label: "Username",
       placeholder: "Username",
       errorMessage:
         "Username should be 3-16 characters and shouldn't include any special character!",
@@ -45,6 +49,7 @@ const App = () => {
       id: 2,
       name: "email",
       type: "email",
+      label: "Email",
       placeholder: "Email",
       errorMessage: "It should be a valid email address!",
     },
@@ -52,6 +57,7 @@ const App = () => {
       id: 3,
       name: "password",
       type: "password",
+      label: "Password",
       placeholder: "Password",
       errorMessage:
         "Password should be 8-20 characters and include at least 1 letter, 1 number and 1 special character!",
@@ -62,8 +68,9 @@ const App = () => {
       id: 4,
       name: "comfirmPassword",
       type: "password",
+      label: "Comfirm Password",
       placeholder: "Comfirm Password",
-      errorMessage: "Passwords should match!",
+      errorMessage: "Passwords don't match!",
       pattern: formData.password,
     },
   ];
@@ -85,14 +92,17 @@ const App = () => {
     <AppContainer>
       <StyledForm onSubmit={handleSubmit}>
         <FormLabel>REGISTER</FormLabel>
-        {inputs.map((input) => (
-          <FormInputs
-            key={input.id}
-            {...input}
-            onChange={handleChange}
-            value={formData[input.name as keyof FormDataProps]}
-          />
-        ))}
+        {inputs.map((input) => {
+          console.log({ ...input });
+          return (
+            <FormInputs
+              key={input.id}
+              {...input}
+              onChange={handleChange}
+              value={formData[input.name as keyof FormDataProps]}
+            />
+          );
+        })}
         <SubmitButton disabled={!isDisabled}>Submit</SubmitButton>
       </StyledForm>
     </AppContainer>

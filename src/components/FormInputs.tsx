@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import styled from "styled-components";
 import { InputProp } from "../App";
 
@@ -9,18 +9,17 @@ interface FormInputsProps extends InputProp {
 
 const FormInputs = (props: FormInputsProps) => {
   const [focused, setFocused] = useState(false);
-  const { placeholder, errorMessage } = props;
-  const { ...inputProps } = props;
+  const { id, errorMessage, label, ...inputProps } = props;
 
-  const handleFocus = () => {
+  const handleFocus = (e: ChangeEvent<HTMLInputElement>) => {
     setFocused(true);
+    console.log("FOCUSED");
   };
-  console.log(...props);
 
   return (
     <FormContainer>
-      <label>{placeholder}</label>
-      <Input {...inputProps} />
+      <label>{label}</label>
+      <Input {...inputProps} onBlur={handleFocus} focused={focused} />
       <ErrorMessage>{errorMessage}</ErrorMessage>
     </FormContainer>
   );
@@ -44,7 +43,7 @@ const FormContainer = styled.div`
   }
 `;
 
-const Input = styled.input`
+const Input = styled.input<{ focused: boolean }>`
   padding: 1rem;
   border: none;
   border-radius: 10px;
@@ -52,6 +51,10 @@ const Input = styled.input`
   background-color: rgba(0, 0, 0, 0.03);
   width: 100%;
   transition: all 0.2s;
+
+  &:invalid ~ span {
+    ${({ focused }) => focused && "display:block;"};
+  }
 
   &::placeholder {
     font-size: inherit;
@@ -65,10 +68,6 @@ const Input = styled.input`
   &:focus {
     outline: none;
     background-color: rgba(0, 0, 0, 0.05);
-  }
-
-  &:invalid ~ span {
-    display: block;
   }
 `;
 
